@@ -11,12 +11,14 @@ class ImageWriter implements Runnable {
 	private BufferedImage img;
 	private int width;
 	private int height;
+	private int from;
+	private int to;
 
 	private Writer out;
 
 	private Random rand;
 
-	ImageWriter(String server, int port, BufferedImage img) {
+	ImageWriter(String server, int port, BufferedImage img, int from, int to) {
 		try {
 			connect(server, port);
 		} catch (Exception e) {
@@ -26,6 +28,8 @@ class ImageWriter implements Runnable {
 		this.img = img;
 		this.width = img.getWidth();
 		this.height = img.getHeight();
+		this.from = from;
+		this.to = to;
 
 		this.out = out;
 		this.rand = new Random();
@@ -53,12 +57,13 @@ class ImageWriter implements Runnable {
 		int y;
 
 		while (true) {
-			x = rand.nextInt(Integer.MAX_VALUE) % width;
-			y = rand.nextInt(Integer.MAX_VALUE) % height;
-
-			try {
-				out.write("PX " + x + " " + y + " " + rgbToHex(img.getRGB(x, y)) + "\n");
-			} catch (Exception e) {}
+			for (y = from; y < to; y++) {
+				for (x = 0; x < width; x++) {
+					try {
+						out.write("PX " + x + " " + y + " " + rgbToHex(img.getRGB(x, y)) + "\n");
+					} catch (Exception e) {}
+				}
+			}
 		}
 	}
 }
@@ -74,12 +79,15 @@ public class PifPE {
 		String server = args[0];
 		int port = Integer.valueOf(args[1]);
 		BufferedImage image = ImageIO.read(new File(args[2]));
+		int height = image.getHeight();
 		int threads = Integer.valueOf(args[3]);
 
 		Thread t[] = new Thread[threads];
 
+		int zone = height/threads;
+
 		for (int i = 0; i < threads; i++) {
-			ImageWriter writer = new ImageWriter(server, port, image);
+			ImageWriter writer = new ImageWriter(server, port, image, i*zone, (i+1)*zone);
 			t[i] = new Thread(writer);
 			t[i].start();
 		}
