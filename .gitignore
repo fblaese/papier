@@ -1,1 +1,7 @@
+# java
 *.class
+
+# images
+*.png
+*.jpg
+*.jpeg
