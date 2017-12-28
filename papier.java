@@ -69,10 +69,10 @@ class ImageWriter implements Runnable {
 }
 
 
-public class PifPE {
+public class papier {
 	public static void main(String[] args) throws InterruptedException, IOException {
 		if (args.length != 4) {
-			System.out.println("Usage: " + "PifPE <server> <port> <image> <threads>");
+			System.out.println("Usage: " + "papier <server> <port> <image> <threads>");
 			System.exit(1);
 		}
 
